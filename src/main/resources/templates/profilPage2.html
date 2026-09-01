@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="sr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Српски Круг — Профил члана</title>
+    <style>
+        /* DESIGN TOKENS */
+        :root{
+            --bg: #F6F3EF;
+            --card: #FFFFFF;
+            --primary: #8B0000;
+            --primary-hover: #A40000;
+            --primary-dark: #5E0000;
+            --text: #141414;
+            --muted: rgba(20,20,20,0.6);
+            --divider: rgba(20,20,20,0.08);
+            --shadow: 0 6px 18px rgba(20,20,20,0.06);
+            --radius: 14px;
+            --gap: 24px;
+            --gap-sm: 16px;
+            --space-xxs: 6px;
+            --space-xs: 12px;
+            --space-sm: 18px;
+            --space-md: 24px;
+            --space-lg: 36px;
+            --focus: 2px solid rgba(255,215,120,0.95); /* warm gold focus ring */
+            --glass: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+            --header-dark: #141414;
+            --header-dark-2: #0F0F0F;
+            --chip-selected-bg: #141414;
+            --chip-selected-color: #fff;
+            --min-touch: 44px;
+            --max-width: 1200px;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            --muted-2: rgba(20,20,20,0.45);
+        }
+
+        /* RESET & BASE */
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{
+            margin:0;
+            font-family:var(--font-sans);
+            background:var(--bg);
+            color:var(--text);
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            line-height:1.35;
+            font-size:16px;
+        }
+        a{color:inherit;text-decoration:none}
+        img{max-width:100%;display:block}
+
+        /* LAYOUT */
+        .wrap{
+            max-width:var(--max-width);
+            margin:var(--space-lg) auto;
+            padding:0 var(--space-md);
+        }
+        .layout{
+            display:grid;
+            grid-template-columns: 35% 65%;
+            gap:var(--gap);
+            align-items:start;
+        }
+
+        /* MOBILE STACK */
+        @media (max-width:900px){
+            .wrap{margin:var(--space-md) auto}
+            .layout{grid-template-columns:1fr; gap:var(--gap-sm)}
+        }
+
+        /* HEADER / CLUB BAR */
+        header.clubbar{
+            width:100%;
+            background:linear-gradient(180deg, var(--header-dark), var(--header-dark-2));
+            color:#fff;
+            padding:10px 0;
+            box-shadow:0 2px 6px rgba(0,0,0,0.2);
+            position:sticky;
+            top:0;
+            z-index:40;
+        }
+        .clubbar-inner{
+            max-width:var(--max-width);
+            margin:0 auto;
+            padding:8px var(--space-md);
+            display:flex;
+            gap:var(--space-md);
+            align-items:center;
+            justify-content:space-between;
+        }
+        .brand{
+            display:flex;
+            gap:12px;
+            align-items:center;
+        }
+        .brand .wordmark{
+            font-weight:700;
+            font-size:18px;
+            letter-spacing:0.6px;
+            font-family:var(--font-sans);
+        }
+        nav.primary{
+            display:flex;
+            gap:6px;
+            align-items:center;
+        }
+        nav.primary a{
+            color:#fff;
+            padding:8px 12px;
+            border-radius:10px;
+            font-weight:600;
+            font-size:14px;
+        }
+        nav.primary a:hover,
+        nav.primary a:focus{
+            background:rgba(255,255,255,0.04);
+            outline:none;
+        }
+        nav.primary a.active{
+            box-shadow: inset 0 -3px 0 var(--primary);
+            color:var(--primary);
+            background:transparent;
+        }
+
+        /* SEARCH */
+        .search{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin-left:auto;
+        }
+        .search form{display:flex;align-items:center}
+        .search input[type="search"]{
+            background:rgba(255,255,255,0.06);
+            border:1px solid rgba(255,255,255,0.06);
+            color:#fff;
+            padding:10px 12px;
+            border-radius:10px;
+            min-width:220px;
+        }
+        .search input::placeholder{color:rgba(255,255,255,0.7)}
+        .search input:focus{outline:var(--focus); background:rgba(255,255,255,0.03)}
+
+        @media (max-width:900px){
+            .search input{display:none}
+            nav.primary{display:none}
+            .clubbar-inner{justify-content:flex-start}
+        }
+
+        /* CARD Base */
+        .card{
+            background:var(--card);
+            border-radius:var(--radius);
+            padding:24px;
+            box-shadow:var(--shadow);
+            border:1px solid var(--divider);
+        }
+        @media (max-width:900px){
+            .card{padding:16px}
+        }
+
+        /* PROFILE HERO */
+        .hero{
+            overflow:hidden;
+            padding:0;
+        }
+        .hero .cover{
+            height:140px;
+            background:
+                    linear-gradient(180deg, rgba(139,0,0,0.06), rgba(0,0,0,0.02)),
+                    radial-gradient(800px 200px at 20% 20%, rgba(139,0,0,0.07), transparent 20%),
+                    linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02));
+            display:block;
+            border-top-left-radius:var(--radius);
+            border-top-right-radius:var(--radius);
+            position:relative;
+        }
+        .hero .cover .cover-placeholder{
+            position:absolute;
+            inset:0;
+            background:linear-gradient(120deg,#fff 0%, #efecea 100%);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:var(--muted);
+            font-weight:700;
+            letter-spacing:0.6px;
+            font-size:14px;
+        }
+        .hero-body{
+            display:flex;
+            gap:16px;
+            align-items:flex-start;
+            padding:18px 24px 24px;
+        }
+        .avatar{
+            width:96px;
+            height:96px;
+            min-width:96px;
+            border-radius:50%;
+            background:
+                    conic-gradient(from 180deg at 50% 50%, #f5f2f1, #efe8e4),
+                    linear-gradient(180deg, rgba(20,20,20,0.03), rgba(20,20,20,0.01));
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            color:var(--muted);
+            border:4px solid var(--card);
+            box-shadow:0 6px 18px rgba(20,20,20,0.06);
+            flex-shrink:0;
+        }
+        .hero-meta{flex:1;min-width:0}
+        .hero-meta h1{
+            margin:0 0 8px;
+            font-size:20px;
+            color:var(--text);
+            display:flex;
+            gap:10px;
+            align-items:center;
+            flex-wrap:wrap;
+        }
+        .verified{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.8));
+            padding:6px 10px;
+            border-radius:999px;
+            font-size:13px;
+            color:var(--muted);
+            border:1px solid var(--divider);
+        }
+        .verified svg{width:14px;height:14px;display:block;flex-shrink:0;color:var(--primary)}
+        .meta-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;color:var(--muted-2);font-size:14px}
+        .role-pill{
+            background:rgba(139,0,0,0.06);
+            border-left:4px solid var(--primary);
+            padding:8px 10px;
+            border-radius:10px;
+            font-weight:600;
+            color:var(--primary-dark);
+            font-size:13px;
+        }
+
+        /* SEGMENTED CONTROL */
+        .segmented{
+            display:inline-flex;
+            background:transparent;
+            border-radius:999px;
+            padding:4px;
+            border:1px solid var(--divider);
+            margin-top:12px;
+        }
+        .segmented button{
+            background:transparent;
+            border:0;
+            padding:8px 12px;
+            border-radius:999px;
+            min-height:var(--min-touch);
+            font-weight:600;
+            color:var(--muted-2);
+            cursor:pointer;
+        }
+        .segmented button[aria-pressed="true"]{
+            background:var(--chip-selected-bg);
+            color:var(--chip-selected-color);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.04) inset;
+        }
+        .segmented button:focus{outline:var(--focus);}
+
+        /* LEFT SIDEBAR STYLES (profile + trust) */
+        .left .card + .card{margin-top:var(--gap-sm)}
+        .stat-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px}
+        .stat{
+            background:linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));
+            border-radius:10px;
+            padding:10px 12px;
+            display:flex;
+            flex-direction:column;
+            min-width:120px;
+            gap:6px;
+        }
+        .stat .num{font-weight:800;color:var(--primary-dark);font-size:20px}
+        .micro-cards{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+        .micro{
+            display:flex;
+            gap:8px;
+            align-items:center;
+            padding:8px;
+            background:rgba(0,0,0,0.02);
+            border-radius:10px;
+            min-width:120px;
+        }
+        .micro .miniavatar{
+            width:36px;height:36px;border-radius:50%;background:linear-gradient(90deg,#efe8e4,#f6f3ef);display:inline-flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700;font-size:13px;
+        }
+
+        /* BADGES */
+        .badges{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+        .badge{
+            background:linear-gradient(180deg,#fff,#f9f7f6);
+            border:1px solid var(--divider);
+            padding:8px 12px;
+            border-radius:999px;
+            font-weight:700;
+            color:var(--muted-2);
+            display:inline-flex;
+            gap:8px;
+            align-items:center;
+            font-size:13px;
+        }
+        .badge .medal{
+            width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;background:linear-gradient(180deg,#fff4eb,#fff0e8);color:var(--primary);font-weight:800;border:1px solid rgba(139,0,0,0.06)
+        }
+
+        /* SCORE CARD */
+        .score-large{display:flex;gap:18px;align-items:center}
+        .score-num{font-size:40px;font-weight:900;color:var(--primary-dark)}
+        .tier-line{font-weight:700;color:var(--muted-2)}
+        .progress{
+            width:100%;
+            height:12px;
+            background:linear-gradient(90deg, rgba(20,20,20,0.04), rgba(20,20,20,0.02));
+            border-radius:999px;
+            overflow:hidden;
+            border:1px solid var(--divider);
+        }
+        .progress > i{
+            display:block;
+            height:100%;
+            background:linear-gradient(90deg,var(--primary),var(--primary-hover));
+            width:40%;
+        }
+        .points-list{margin-top:12px;font-size:14px;color:var(--muted-2);line-height:1.6}
+        .points-list li{margin-bottom:6px}
+
+        /* ENDORSEMENTS */
+        .endorse-row{display:flex;gap:12px;align-items:center;padding:12px;border-radius:10px;border:1px solid var(--divider);background:linear-gradient(180deg,#fff,#fbfbfb)}
+        .endorse-row .endorse-meta{font-size:14px;color:var(--muted-2)}
+        .endorse-row .endorse-meta b{color:var(--text)}
+
+        /* TAGS / CHIPS */
+        .tags-grid{display:flex;flex-direction:column;gap:12px}
+        .tag-category{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+        .tag-category .label{min-width:100px;color:var(--muted-2);font-weight:700;font-size:14px}
+        .chips{display:flex;gap:8px;flex-wrap:wrap}
+        .chip{
+            padding:8px 12px;border-radius:999px;border:1px solid var(--divider);background:#fff;font-weight:700;color:var(--muted-2);
+            cursor:pointer;min-height:var(--min-touch);display:inline-flex;align-items:center;gap:8px;font-size:14px;
+        }
+        .chip:hover{border-color:rgba(20,20,20,0.12)}
+        .chip[aria-pressed="true"]{background:var(--chip-selected-bg);color:var(--chip-selected-color);border-color:transparent}
+
+        /* GOVERNANCE */
+        .gov-pill{
+            display:inline-flex;gap:10px;align-items:center;padding:8px 12px;border-radius:999px;font-weight:700;
+            border:1px solid var(--divider);
+        }
+        .gov-pill .shield{width:14px;height:14px;border-radius:3px;display:inline-block}
+        .shield.green{background:#1db954}
+        .shield.yellow{background:#f7b500}
+        .shield.red{background:#d9534f}
+
+        /* LOG TABLE (activity) */
+        .log-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+        .filter-chip{padding:8px 12px;border-radius:999px;border:1px solid var(--divider);background:#fff;cursor:pointer;min-height:var(--min-touch)}
+        .filter-chip[aria-pressed="true"]{background:var(--chip-selected-bg);color:var(--chip-selected-color)}
+        .log-table{width:100%;border-collapse:collapse;font-size:14px}
+        .log-table th,.log-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--divider)}
+        .log-table th{font-weight:700;color:var(--muted-2);font-size:13px}
+        .delta-positive{color:#15803d;font-weight:800}
+        .delta-negative{color:#b91c1c;font-weight:800}
+
+        /* ACCESSIBILITY */
+        .sr-only{
+            position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+        }
+
+        /* SMALL UTILITIES */
+        .muted{color:var(--muted-2)}
+        .small{font-size:13px;color:var(--muted-2)}
+        .section-title{font-size:16px;font-weight:800;margin-bottom:8px}
+        .divider{height:1px;background:var(--divider);border-radius:2px;margin:12px 0}
+        .right{display:flex;flex-direction:column;gap:12px}
+        .overflow-count{padding:6px 10px;border-radius:999px;background:rgba(20,20,20,0.06);font-weight:700}
+        /* Truncation helper */
+        .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    </style>
+</head>
+<body>
+<header class="clubbar" role="banner">
+    <div class="clubbar-inner" role="navigation" aria-label="Клуб навигација">
+        <div class="brand" aria-hidden="false">
+            <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(180deg,#fff4f4,#fff);display:grid;place-items:center;color:var(--primary);font-weight:900">К</div>
+            <div>
+                <div class="wordmark">Српски Круг</div>
+                <div class="small" style="color:rgba(255,255,255,0.7)">Invite-only | Еxecutive Network</div>
+            </div>
+        </div>
+
+        <nav class="primary" aria-label="Примарна навигација">
+            <a href="#" class="active" role="link">Мрежа</a>
+            <a href="#" role="link">Кругови</a>
+            <a href="#" role="link">Сусрети</a>
+            <a href="#" role="link">Савет</a>
+        </nav>
+
+        <div class="search" role="search" aria-label="Претрага унутар Круга">
+            <form action="#" onsubmit="return false;">
+                <label class="sr-only" for="site-search">Претрага унутар Круга</label>
+                <input id="site-search" type="search" placeholder="Претрага унутар Круга…" aria-label="Претрага унутар Круга" />
+            </form>
+        </div>
+    </div>
+</header>
+
+<main class="wrap" id="main" role="main">
+    <div class="layout" role="region" aria-label="Профил и информације">
+        <!-- LEFT SIDEBAR -->
+        <aside class="left" aria-label="Сиде бар">
+            <!-- PROFILE HERO CARD -->
+            <section class="card hero" aria-labelledby="profile-heading">
+                <div class="cover" role="img" aria-label="Покривна фотографија">
+                    <div class="cover-placeholder">Прегледна покривна фотографија</div>
+                </div>
+                <div class="hero-body">
+                    <div class="avatar" aria-hidden="true">НП</div>
+                    <div class="hero-meta">
+                        <h1 id="profile-heading">
+                            <span class="truncate">Никола Петровић</span>
+                            <span class="verified" title="Верификован члан">
+                  <!-- Check icon (SVG) -->
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Верификован
+                </span>
+                        </h1>
+
+                        <div class="meta-row">
+                            <span class="small">M.Sc. на ETH Zürich</span>
+                            <span class="small">•</span>
+                            <span class="small truncate">Senior Cloud Engineer @ Google</span>
+                            <span class="role-pill">Градски амбасадор – Zürich</span>
+                        </div>
+
+                        <div style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                            <div class="small muted">Круг: <strong style="color:var(--text);font-weight:800;margin-left:6px">Zürich</strong></div>
+
+                            <div class="segmented" role="tablist" aria-label="Видљивост профила" data-segmented="">
+                                <button role="tab" aria-pressed="true" aria-label="Мрежа">Мрежа</button>
+                                <button role="tab" aria-pressed="false" aria-label="Само круг">Само круг</button>
+                                <button role="tab" aria-pressed="false" aria-label="Приватно">Приватно</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TRUST & INVITE -->
+            <section class="card" aria-labelledby="trust-heading" style="margin-top:var(--gap-sm)">
+                <h2 id="trust-heading" class="section-title">Траст & Позиви</h2>
+                <div class="small muted">Позвао</div>
+                <div style="margin-top:8px">
+                    <a href="#" class="micro" style="padding:10px;align-items:center;">
+                        <div class="miniavatar">PM</div>
+                        <div>
+                            <div style="font-weight:800">Person MN</div>
+                            <div class="small">Ин вите код: ZR-12</div>
+                        </div>
+                    </a>
+                </div>
+
+                <div style="margin-top:12px">
+                    <div class="small muted">Позвани чланови</div>
+                    <div class="micro-cards" aria-hidden="false" style="margin-top:8px">
+                        <div class="micro"><div class="miniavatar">PA</div><div class="truncate small">Person A</div></div>
+                        <div class="micro"><div class="miniavatar">PB</div><div class="truncate small">Person B</div></div>
+                        <div class="micro"><div class="miniavatar">+</div><div class="overflow-count small">+6</div></div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="stat-row" aria-hidden="false">
+                    <div class="stat">
+                        <div class="small muted">Посећени сусрети</div>
+                        <div class="num">14</div>
+                    </div>
+                    <div class="stat">
+                        <div class="small muted">Организовани сусрети</div>
+                        <div class="num">3</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BADGES -->
+            <section class="card" aria-labelledby="badges-heading" style="margin-top:var(--gap-sm)">
+                <h2 id="badges-heading" class="section-title">Постигања</h2>
+                <div class="badges" role="list">
+                    <div class="badge" role="listitem" title="Домаћин">
+                        <span class="medal">H</span> Домаћин
+                    </div>
+                    <div class="badge" role="listitem" title="Градитељ">
+                        <span class="medal">G</span> Градитељ
+                    </div>
+                    <div class="badge" role="listitem" title="Градски амбасадор">
+                        <span class="medal">A</span> Градски амбасадор
+                    </div>
+                    <div class="badge" role="listitem" title="+3 остало">
+                        +3
+                    </div>
+                </div>
+            </section>
+
+            <!-- GOVERNANCE (private) -->
+            <section class="card" aria-labelledby="gov-heading" style="margin-top:var(--gap-sm)">
+                <h2 id="gov-heading" class="section-title">Управљање & Репутација <span class="small muted" style="margin-left:8px">(Приватно)</span></h2>
+                <div style="display:flex;gap:12px;align-items:center">
+                    <div class="gov-pill" role="status" aria-label="Статус мреже">
+                        <span class="shield green" aria-hidden="true"></span>
+                        <span style="font-weight:800;color:var(--text)">Clear / Low Risk</span>
+                    </div>
+                    <div class="small muted">Видљиво само Савету.</div>
+                </div>
+
+                <div style="margin-top:12px">
+                    <label for="gov-note" class="sr-only">Разлог или белешка</label>
+                    <textarea id="gov-note" rows="3" placeholder="Разлог/белешка..." style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--divider);resize:vertical"></textarea>
+                </div>
+            </section>
+        </aside>
+
+        <!-- RIGHT / MAIN -->
+        <section class="right" aria-label="Главни садржај">
+            <!-- SCORE & GAMIFICATION -->
+            <article class="card" aria-labelledby="score-heading">
+                <h2 id="score-heading" class="section-title">Скор & Рангирање</h2>
+                <div class="score-large">
+                    <div>
+                        <div class="score-num" aria-hidden="false">42</div>
+                        <div class="small muted">Тренутни поени</div>
+                    </div>
+                    <div style="flex:1;min-width:0">
+                        <div class="tier-line">Круг Сидро / Anchor (31–60)</div>
+                        <div style="margin-top:10px" class="progress" aria-hidden="false" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="60">
+                            <!-- width indicates progress toward next tier (example) -->
+                            <i style="width:55%"></i>
+                        </div>
+                        <div class="small muted" style="margin-top:8px">до следећег ранга: <strong style="color:var(--text)">19 поена</strong></div>
+
+                        <div style="margin-top:14px">
+                            <div class="small muted" style="font-weight:800;margin-bottom:8px">Ранги</div>
+                            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                                <div class="badge">Сребрењак / Member (0–10)</div>
+                                <div class="badge">Актив / Contributor (11–30)</div>
+                                <div class="badge" style="background:linear-gradient(90deg,#fff7f7,#fff)">Круг Сидро / Anchor (31–60)</div>
+                                <div class="badge">Круг Ступ / Pillar (61+)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div>
+                    <div class="small muted" style="font-weight:800;margin-bottom:8px">Правила бодовања</div>
+                    <ul class="points-list" aria-live="polite">
+                        <li>+1 учешће на сусрету</li>
+                        <li>+2 организација сусрета</li>
+                        <li>+5 довођење члана</li>
+                        <li>−10 ако доведени члан буде искључен</li>
+                        <li>−1 месечно због неактивности</li>
+                    </ul>
+                </div>
+            </article>
+
+            <!-- ENDORSEMENTS -->
+            <article class="card" aria-labelledby="endorse-heading">
+                <h2 id="endorse-heading" class="section-title">Потврде & Референце</h2>
+
+                <div style="display:flex;flex-direction:column;gap:12px">
+                    <div class="endorse-row" role="article" aria-label="Потврђено за Cloud Architecture">
+                        <div style="display:flex;gap:12px;align-items:center">
+                            <div class="miniavatar" aria-hidden="true">НН</div>
+                            <div>
+                                <div style="font-weight:800">Потврђено за Cloud Architecture (+3)</div>
+                                <div class="endorse-meta small">од Никола Н. и још 2 • <span class="small muted">2 недеље</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="endorse-row" role="article" aria-label="Потврђено за DevOps">
+                        <div style="display:flex;gap:12px;align-items:center">
+                            <div class="miniavatar" aria-hidden="true">TV</div>
+                            <div>
+                                <div style="font-weight:800">Потврђено за DevOps (+1)</div>
+                                <div class="endorse-meta small">од Тина В. • <span class="small muted">1 месец</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- TAGS / STRUCTURED EXPERTISE -->
+            <article class="card" aria-labelledby="tags-heading">
+                <h2 id="tags-heading" class="section-title">Структурирана експертиза</h2>
+                <div class="tags-grid">
+                    <div class="tag-category" aria-label="Индустрија">
+                        <div class="label">Индустрија</div>
+                        <div class="chips" role="list">
+                            <button class="chip" role="button" aria-pressed="false">Cloud/DevOps</button>
+                            <button class="chip" role="button" aria-pressed="false">Fintech</button>
+                        </div>
+                    </div>
+
+                    <div class="tag-category" aria-label="Техничке вештине">
+                        <div class="label">Техничке вештине</div>
+                        <div class="chips" role="list">
+                            <button class="chip" role="button" aria-pressed="true">Kubernetes</button>
+                            <button class="chip" role="button" aria-pressed="false">System Design</button>
+                        </div>
+                    </div>
+
+                    <div class="tag-category" aria-label="Алумни / Едукација">
+                        <div class="label">Алумни</div>
+                        <div class="chips" role="list">
+                            <button class="chip" role="button" aria-pressed="true">ETH Zürich</button>
+                        </div>
+                    </div>
+
+                    <div class="tag-category" aria-label="Хобији">
+                        <div class="label">Хобији</div>
+                        <div class="chips" role="list">
+                            <button class="chip" role="button" aria-pressed="false">Trail Running</button>
+                            <button class="chip" role="button" aria-pressed="false">Chess</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ACTIVITY LOG -->
+            <article class="card" aria-labelledby="activity-heading">
+                <h2 id="activity-heading" class="section-title">Активност & Разлагање бодова</h2>
+
+                <div class="log-filters" role="toolbar" aria-label="Филтери активности">
+                    <button class="filter-chip" role="button" aria-pressed="true">Све</button>
+                    <button class="filter-chip" role="button" aria-pressed="false">Доприноси</button>
+                    <button class="filter-chip" role="button" aria-pressed="false" th:text="#{filters.governance}">Governance</button>
+                    <button class="filter-chip" role="button" aria-pressed="false">Потврде</button>
+                </div>
+
+                <div style="overflow:auto">
+                    <table class="log-table" role="table" aria-label="Лог активности">
+                        <thead>
+                        <tr>
+                            <th scope="col">Датум</th>
+                            <th scope="col">Акција</th>
+                            <th scope="col">Промена</th>
+                            <th scope="col">Укупно</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>2026-08-20</td>
+                            <td>Организовао сусрет: Zürich Coffee</td>
+                            <td class="delta-positive">+2</td>
+                            <td>42</td>
+                        </tr>
+                        <tr>
+                            <td>2026-08-12</td>
+                            <td>Потврда: Cloud Architecture</td>
+                            <td class="delta-positive">+3</td>
+                            <td>40</td>
+                        </tr>
+                        <tr>
+                            <td>2026-07-10</td>
+                            <td>Накнада неактивности</td>
+                            <td class="delta-negative">−1</td>
+                            <td>37</td>
+                        </tr>
+                        <tr>
+                            <td>2026-06-05</td>
+                            <td>Доведен нов члан: Person B</td>
+                            <td class="delta-positive">+5</td>
+                            <td>38</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+        </section>
+    </div>
+</main>
+
+<script>
+    // Minimal progressive enhancement for segmented controls and chips/filters
+    (function(){
+        // Segmented control behavior (accessible)
+        document.querySelectorAll('[data-segmented]').forEach(function(seg){
+            seg.addEventListener('click', function(e){
+                var button = e.target.closest('button');
+                if(!button) return;
+                Array.from(seg.querySelectorAll('button')).forEach(function(b){
+                    b.setAttribute('aria-pressed','false');
+                });
+                button.setAttribute('aria-pressed','true');
+            });
+            seg.addEventListener('keydown', function(e){
+                // left/right arrow handling
+                var btns = Array.from(seg.querySelectorAll('button'));
+                var idx = btns.indexOf(document.activeElement);
+                if(e.key === 'ArrowRight'){ e.preventDefault(); btns[(idx+1)%btns.length].focus(); }
+                if(e.key === 'ArrowLeft'){ e.preventDefault(); btns[(idx-1+btns.length)%btns.length].focus(); }
+            });
+        });
+
+        // Toggle chips (filters and tags)
+        document.querySelectorAll('.chip, .filter-chip').forEach(function(c){
+            c.addEventListener('click', function(e){
+                var pressed = c.getAttribute('aria-pressed') === 'true';
+                // For filter chips allow single toggle behavior; for tag chips allow toggle many
+                c.setAttribute('aria-pressed', (!pressed).toString());
+            });
+            c.addEventListener('keydown', function(e){
+                if(e.key === 'Enter' || e.key === ' '){
+                    e.preventDefault(); c.click();
+                }
+            });
+        });
+
+        // Ensure keyboard focus visible on clickable cards
+        document.querySelectorAll('.micro, .endorse-row, .badge').forEach(function(el){
+            el.setAttribute('tabindex','0');
+            el.addEventListener('keydown', function(e){
+                if(e.key === 'Enter') el.click();
+            });
+        });
+    })();
+</script>
+</body>
+</html>
