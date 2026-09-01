@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="${#locale}" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="#{title}">Српски Круг - Никола Петровић</title>
+  <style>
+    /* -------------------------------------------------------------------------- */
+    /* DESIGN TOKENS & CSS VARIABLES                                              */
+    /* -------------------------------------------------------------------------- */
+    :root {
+      /* Colors */
+      --bg-page: #F6F3EF;
+      --bg-card: #FFFFFF;
+      --bg-dark: #141414;
+      --bg-dark-hover: #1F1F1F;
+      --bg-muted: #EFECE6;
+      --bg-accent-subtle: #F5EBEB;
+
+      --primary-burgundy: #8B0000;
+      --primary-burgundy-hover: #A40000;
+      --primary-burgundy-dark: #5E0000;
+
+      --text-main: #141414;
+      --text-muted: #666059;
+      --text-light: #F6F3EF;
+      --text-light-muted: #A39E96;
+
+      --border-subtle: rgba(20, 20, 20, 0.08);
+      --border-dark: rgba(246, 243, 239, 0.15);
+
+      /* Status Colors */
+      --status-clear-bg: #E8F5E9;
+      --status-clear-text: #1B5E20;
+      --status-watch-bg: #FFF8E1;
+      --status-watch-text: #B78103;
+      --status-penalty-bg: #FFEBEE;
+      --status-penalty-text: #C62828;
+
+      /* Typography */
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-size-xs: 0.75rem;    /* 12px */
+      --font-size-sm: 0.875rem;   /* 14px */
+      --font-size-md: 1rem;       /* 16px */
+      --font-size-lg: 1.125rem;   /* 18px */
+      --font-size-xl: 1.375rem;   /* 22px */
+      --font-size-2xl: 1.75rem;  /* 28px */
+
+      /* Spacing Scale */
+      --space-6: 0.375rem;  /* 6px */
+      --space-12: 0.75rem;  /* 12px */
+      --space-18: 1.125rem; /* 18px */
+      --space-24: 1.5rem;   /* 24px */
+      --space-36: 2.25rem;  /* 36px */
+
+      /* Layout */
+      --radius-card: 14px;
+      --radius-pill: 999px;
+      --radius-sm: 6px;
+      --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+      --shadow-elevation: 0 12px 32px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* BASE & RESET                                                               */
+    /* -------------------------------------------------------------------------- */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      font-size: var(--font-size-md);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Focus States */
+    :focus-visible {
+      outline: 2px solid var(--primary-burgundy);
+      outline-offset: 2px;
+    }
+
+    .dark-mode-focus:focus-visible {
+      outline: 2px solid #E6B800;
+      outline-offset: 2px;
+    }
+
+    /* Typography Helpers */
+    h1, h2, h3, h4 {
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* HEADER / NAVBAR                                                            */
+    /* -------------------------------------------------------------------------- */
+    .header {
+      background: linear-gradient(180deg, #141414 0%, #0F0F0F 100%);
+      color: var(--text-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border-dark);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-24);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-24);
+    }
+
+    .brand-wordmark {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-light);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+      min-height: 44px;
+    }
+
+    .brand-wordmark::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background-color: var(--primary-burgundy);
+      border-radius: 50%;
+    }
+
+    .nav-search {
+      flex: 1;
+      max-width: 360px;
+      position: relative;
+    }
+
+    .nav-search input {
+      width: 100%;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-pill);
+      padding: 0 var(--space-18) 0 40px;
+      color: var(--text-light);
+      font-size: var(--font-size-sm);
+      transition: all 0.2s ease;
+    }
+
+    .nav-search input::placeholder {
+      color: var(--text-light-muted);
+    }
+
+    .nav-search input:focus {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--text-light-muted);
+      outline: none;
+    }
+
+    .nav-search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      fill: var(--text-light-muted);
+      pointer-events: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--text-light-muted);
+      text-decoration: none;
+      padding: var(--space-12) var(--space-18);
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+
+    .nav-link:hover {
+      color: var(--text-light);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-link.active {
+      color: var(--text-light);
+      background: var(--primary-burgundy);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* LAYOUT CONTAINER                                                           */
+    /* -------------------------------------------------------------------------- */
+    .main-container {
+      max-width: 1200px;
+      margin: var(--space-36) auto;
+      padding: 0 var(--space-24);
+      display: grid;
+      grid-template-columns: 35% 1fr;
+      gap: var(--space-24);
+      align-items: start;
+    }
+
+    .sidebar-col, .main-col {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-24);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* CARD COMPONENT                                                             */
+    /* -------------------------------------------------------------------------- */
+    .card {
+      background-color: var(--bg-card);
+      border-radius: var(--radius-card);
+      padding: var(--space-24);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-subtle);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-18);
+    }
+
+    .card-title {
+      font-size: var(--font-size-lg);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+    }
+
+    .card-title::before {
+      content: "";
+      display: block;
+      width: 4px;
+      height: 18px;
+      background-color: var(--primary-burgundy);
+      border-radius: 2px;
+    }
+
+    .card-subtitle {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* A) PROFILE HERO CARD                                                       */
+    /* -------------------------------------------------------------------------- */
+    .card-hero {
+      padding: 0 0 var(--space-24) 0;
+    }
+
+    .hero-cover {
+      height: 160px;
+      background: linear-gradient(135deg, #2A0808 0%, #5E0000 50%, #141414 100%);
+      position: relative;
+    }
+
+    .hero-avatar-wrapper {
+      padding: 0 var(--space-24);
+      margin-top: -60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: var(--space-18);
+    }
+
+    .hero-avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 4px solid var(--bg-card);
+      background: var(--bg-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-elevation);
+      font-size: var(--font-size-2xl);
+      font-weight: 700;
+      color: var(--primary-burgundy);
+    }
+
+    .hero-content {
+      padding: 0 var(--space-24);
+    }
+
+    .hero-name-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-6);
+    }
+
+    .hero-name {
+      font-size: var(--font-size-2xl);
+      font-weight: 700;
+    }
+
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-accent-subtle);
+      color: var(--primary-burgundy);
+      padding: 2px 10px;
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      border: 1px solid rgba(139, 0, 0, 0.15);
+    }
+
+    .verified-icon {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .hero-title {
+      font-size: var(--font-size-md);
+      color: var(--text-main);
+      font-weight: 500;
+      margin-bottom: var(--space-6);
+    }
+
+    .hero-meta {
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: var(--space-18);
+    }
+
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-6);
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      align-self: flex-start;
+      margin-bottom: var(--space-18);
+    }
+
+    /* Segmented Control */
+    .segmented-control {
+      display: flex;
+      background: var(--bg-muted);
+      padding: 4px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .segment-btn {
+      flex: 1;
+      min-height: 38px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .segment-btn.active {
+      background: var(--bg-card);
+      color: var(--text-main);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* B) TRUST & INVITATION NETWORK                                              */
+    /* -------------------------------------------------------------------------- */
+    .invitation-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-18);
+    }
+
+    .inviter-box {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+      padding: var(--space-12);
+      background: var(--bg-page);
+      border-radius: var(--radius-sm);
+    }
+
+    .inviter-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+    }
+
+    .inviter-link {
+      color: var(--primary-burgundy);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .inviter-link:hover {
+      text-decoration: underline;
+    }
+
+    .invited-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: var(--space-12);
+    }
+
+    .micro-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      padding: 8px var(--space-12);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      text-decoration: none;
+      color: var(--text-main);
+      font-size: var(--font-size-xs);
+      font-weight: 500;
+      transition: border-color 0.2s ease;
+    }
+
+    .micro-card:hover {
+      border-color: var(--primary-burgundy);
+    }
+
+    .micro-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12);
+      margin-top: var(--space-6);
+    }
+
+    .stat-box {
+      padding: var(--space-12);
+      background: var(--bg-page);
+      border-radius: var(--radius-sm);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      color: var(--primary-burgundy);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* C) SCORE & GAMIFICATION                                                    */
+    /* -------------------------------------------------------------------------- */
+    .score-banner {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-12);
+      margin-bottom: var(--space-18);
+    }
+
+    .score-number {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--primary-burgundy);
+      line-height: 1;
+    }
+
+    .score-caption {
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+    }
+
+    .progress-container {
+      margin-bottom: var(--space-24);
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .progress-bar-bg {
+      height: 8px;
+      background: var(--bg-muted);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 70%; /* 42 out of 60 for Anchor tier */
+      background: linear-gradient(90deg, var(--primary-burgundy) 0%, var(--primary-burgundy-hover) 100%);
+      border-radius: var(--radius-pill);
+    }
+
+    .tier-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: var(--space-24);
+    }
+
+    .tier-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px var(--space-12);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      background: var(--bg-page);
+    }
+
+    .tier-item.current {
+      background: var(--bg-accent-subtle);
+      color: var(--primary-burgundy-dark);
+      font-weight: 700;
+      border-left: 3px solid var(--primary-burgundy);
+    }
+
+    .point-rules {
+      background: var(--bg-page);
+      padding: var(--space-12);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+    }
+
+    .point-rules-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .point-rules ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .point-rules li {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+    }
+
+    .rule-plus { color: #2E7D32; font-weight: 600; }
+    .rule-minus { color: var(--status-penalty-text); font-weight: 600; }
+
+    /* -------------------------------------------------------------------------- */
+    /* D) ACHIEVEMENT BADGES                                                      */
+    /* -------------------------------------------------------------------------- */
+    .badges-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-12);
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--bg-page);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .badge-pill-icon {
+      width: 16px;
+      height: 16px;
+      fill: var(--primary-burgundy);
+    }
+
+    .badge-overflow {
+      background: var(--bg-muted);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* E) ENDORSEMENTS (TRUST NETWORK)                                            */
+    /* -------------------------------------------------------------------------- */
+    .endorsements-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-12);
+    }
+
+    .endorsement-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-12);
+      background: var(--bg-page);
+      border-radius: var(--radius-sm);
+      gap: var(--space-12);
+    }
+
+    .endorsement-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+    }
+
+    .endorsement-avatar-stack {
+      display: flex;
+      margin-right: var(--space-6);
+    }
+
+    .endorsement-avatar-stack .micro-avatar {
+      margin-right: -8px;
+      border: 2px solid var(--bg-card);
+    }
+
+    .endorsement-text {
+      font-size: var(--font-size-sm);
+      color: var(--text-main);
+    }
+
+    .endorsement-text strong {
+      font-weight: 600;
+    }
+
+    .endorsement-val {
+      display: inline-flex;
+      align-items: center;
+      background: var(--bg-accent-subtle);
+      color: var(--primary-burgundy);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      margin-left: 4px;
+    }
+
+    .endorsement-time {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* F) STRUCTURED EXPERTISE TAGS                                               */
+    /* -------------------------------------------------------------------------- */
+    .tag-category {
+      margin-bottom: var(--space-18);
+    }
+
+    .tag-category:last-child {
+      margin-bottom: 0;
+    }
+
+    .tag-category-title {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-12);
+      font-weight: 700;
+    }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag-chip {
+      display: inline-flex;
+      align-items: center;
+      height: 38px;
+      padding: 0 16px;
+      background: var(--bg-page);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-sm);
+      color: var(--text-main);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .tag-chip:hover {
+      border-color: var(--text-main);
+      background: var(--bg-card);
+    }
+
+    .tag-chip.selected {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      border-color: var(--bg-dark);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* G) GOVERNANCE & REPUTATION (PRIVATE)                                       */
+    /* -------------------------------------------------------------------------- */
+    .card-governance {
+      border: 1px dashed rgba(139, 0, 0, 0.3);
+      background: #FAF8F5;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .status-pill.clear {
+      background: var(--status-clear-bg);
+      color: var(--status-clear-text);
+    }
+
+    .status-pill.watch {
+      background: var(--status-watch-bg);
+      color: var(--status-watch-text);
+    }
+
+    .status-pill.penalty {
+      background: var(--status-penalty-bg);
+      color: var(--status-penalty-text);
+    }
+
+    .governance-note-area {
+      margin-top: var(--space-18);
+    }
+
+    .governance-note-area label {
+      display: block;
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .governance-note-area textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: var(--space-12);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-family);
+      font-size: var(--font-size-sm);
+      color: var(--text-main);
+      resize: vertical;
+    }
+
+    .governance-note-area textarea:focus {
+      outline: none;
+      border-color: var(--primary-burgundy);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* H) ACTIVITY & SCORE BREAKDOWN LOG                                          */
+    /* -------------------------------------------------------------------------- */
+    .filter-chips {
+      display: flex;
+      gap: 8px;
+      margin-bottom: var(--space-18);
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .filter-chip {
+      height: 36px;
+      padding: 0 14px;
+      background: var(--bg-page);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .filter-chip.active {
+      background: var(--primary-burgundy);
+      color: var(--text-light);
+      border-color: var(--primary-burgundy);
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: var(--font-size-sm);
+    }
+
+    .log-table th {
+      padding: 10px var(--space-12);
+      border-bottom: 2px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: var(--font-size-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .log-table td {
+      padding: var(--space-12);
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+    }
+
+    .log-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .delta-positive {
+      color: #2E7D32;
+      font-weight: 700;
+    }
+
+    .delta-negative {
+      color: var(--status-penalty-text);
+      font-weight: 700;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* RESPONSIVE LAYOUT (MOBILE)                                                 */
+    /* -------------------------------------------------------------------------- */
+    @media (max-width: 850px) {
+      .main-container {
+        grid-template-columns: 1fr;
+        margin: var(--space-18) auto;
+        padding: 0 var(--space-12);
+        gap: var(--space-18);
+      }
+
+      .header-container {
+        padding: 0 var(--space-12);
+      }
+
+      .nav-search {
+        display: none; /* Hide top search on small screens for simplicity */
+      }
+
+      .nav-links {
+        gap: 2px;
+      }
+
+      .nav-link {
+        padding: var(--space-6) var(--space-12);
+        font-size: var(--font-size-xs);
+      }
+
+      .card {
+        padding: var(--space-18);
+      }
+
+      .hero-cover {
+        height: 120px;
+      }
+
+      .hero-avatar-wrapper {
+        margin-top: -40px;
+      }
+
+      .hero-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: var(--font-size-xl);
+      }
+
+      .hero-name {
+        font-size: var(--font-size-xl);
+      }
+
+      .score-number {
+        font-size: 2.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================================================== -->
+  <!-- HEADER / NAVBAR                                                          -->
+  <!-- ======================================================================== -->
+  <header class="header">
+    <div class="header-container">
+      <a href="#" class="brand-wordmark dark-mode-focus" aria-label="Home" th:attr="aria-label=#{brand}">
+        <span th:text="#{brand}">Српски Круг</span>
+      </a>
+
+      <!-- Language & Theme Controls -->
+        <div style="display:flex; align-items:center; gap:12px;">
+        <div>
+          <select id="lang-select" name="lang" aria-label="Language selector" class="dark-mode-focus" th:onchange="|window.location.href='/?lang=' + this.value|">
+            <option value="sr" th:selected="${#locale.toLanguageTag()=='sr'}">Srpski (ћирилица)</option>
+            <option value="sr-Latn" th:selected="${#locale.toLanguageTag()=='sr-Latn'}">Srpski (latinica)</option>
+            <option value="en" th:selected="${#locale.toLanguageTag()=='en'}">English</option>
+          </select>
+        </div>
+        <form id="theme-form" method="get" th:action="@{/set-theme}">
+          <input type="hidden" name="redirect" id="redirect-input" value="" />
+          <input type="hidden" name="theme" id="theme-input" value="light" />
+          <button type="submit" id="theme-toggle" class="dark-mode-focus" aria-pressed="false" title="Toggle theme">🌓</button>
+        </form>
+        <div aria-hidden="true" style="font-size:0.9rem; color:var(--text-light-muted);" th:text="${#locale}"></div>
+      </div>
+
+      <div class="nav-search">
+        <svg class="nav-search-icon" viewBox="0 0 24 24">
+          <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+        <label for="site-search" class="sr-only" th:text="#{search.placeholder}">Претрага унутар Круга</label>
+        <input type="text" id="site-search" class="dark-mode-focus" th:placeholder="#{search.placeholder}">
+      </div>
+
+      <nav aria-label="Главна навигација">
+          <ul class="nav-links">
+          <li><a href="#" class="nav-link active dark-mode-focus" th:text="#{nav.network}">Мрежа</a></li>
+          <li><a href="#" class="nav-link dark-mode-focus" th:text="#{nav.circles}">Кругови</a></li>
+          <li><a href="#" class="nav-link dark-mode-focus" th:text="#{nav.meetings}">Сусрети</a></li>
+          <li><a href="#" class="nav-link dark-mode-focus" th:text="#{nav.council}">Савет</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ======================================================================== -->
+  <!-- MAIN CONTENT CONTAINER                                                   -->
+  <!-- ======================================================================== -->
+  <main class="main-container">
+
+    <!-- ====================================================================== -->
+    <!-- LEFT SIDEBAR COLUMN (35%)                                              -->
+    <!-- ====================================================================== -->
+    <div class="sidebar-col">
+
+      <!-- SECTION A: PROFILE HERO CARD -->
+      <section class="card card-hero" aria-label="Профил члана">
+        <div class="hero-cover"></div>
+        <div class="hero-avatar-wrapper">
+          <div class="hero-avatar" aria-hidden="true">НП</div>
+        </div>
+        <div class="hero-content">
+          <div class="hero-name-row">
+            <h1 class="hero-name">Никола Петровић</h1>
+            <span class="verified-badge">
+              <svg class="verified-icon" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              </svg>
+              Верификован
+            </span>
+          </div>
+
+          <div class="hero-title">Senior Cloud Engineer @ Google</div>
+          
+          <div class="hero-meta">
+            <span>M.Sc. на ETH Zürich</span>
+            <span>Круг: <strong>Zürich</strong></span>
+          </div>
+
+          <div class="role-badge">
+            <svg style="width:14px; height:14px; fill:currentColor;" viewBox="0 0 24 24">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8s0 0 0 0z"/>
+            </svg>
+            Градски амбасадор – Zürich
+          </div>
+
+          <!-- Visibility Control -->
+          <div class="segmented-control" role="radiogroup" aria-label="Видљивост профила">
+            <button class="segment-btn active" role="radio" aria-checked="true">
+              <svg style="width:12px; height:12px; fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+              Мрежа
+            </button>
+            <button class="segment-btn" role="radio" aria-checked="false">
+              <svg style="width:12px; height:12px; fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+              Само круг
+            </button>
+            <button class="segment-btn" role="radio" aria-checked="false">
+              <svg style="width:12px; height:12px; fill:currentColor;" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              Приватно
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION C: SCORE & GAMIFICATION -->
+      <section class="card" aria-labelledby="score-title">
+        <div class="card-header">
+          <h2 id="score-title" class="card-title" th:text="#{score.title}">Скор и репутација</h2>
+        </div>
+
+        <div class="score-banner">
+          <div class="score-number">42</div>
+          <div class="score-caption">укупно сакупљених поена</div>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-labels">
+            <span>Круг Сидро</span>
+            <span>До следећег ранга: 19 поена</span>
+          </div>
+          <div class="progress-bar-bg" aria-label="Напредак до следећег ранга: 70%">
+            <div class="progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <div class="tier-list">
+          <div class="tier-item">
+            <span>Сребрењак / Member</span>
+            <span>0–10</span>
+          </div>
+          <div class="tier-item">
+            <span>Актив / Contributor</span>
+            <span>11–30</span>
+          </div>
+          <div class="tier-item current">
+            <span>Круг Сидро / Anchor</span>
+            <span>31–60</span>
+          </div>
+          <div class="tier-item">
+            <span>Круг Ступ / Pillar</span>
+            <span>61+</span>
+          </div>
+        </div>
+
+        <div class="point-rules">
+          <div class="point-rules-title">Правила бодовања:</div>
+          <ul>
+            <li><span>Учешће на сусрету</span><span class="rule-plus">+1</span></li>
+            <li><span>Организација сусрета</span><span class="rule-plus">+2</span></li>
+            <li><span>Довођење новог члана</span><span class="rule-plus">+5</span></li>
+            <li><span>Искључење доведеног члана</span><span class="rule-minus">−10</span></li>
+            <li><span>Месечна неактивност</span><span class="rule-minus">−1</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SECTION D: ACHIEVEMENT BADGES -->
+      <section class="card" aria-labelledby="badges-title">
+        <div class="card-header">
+          <h2 id="badges-title" class="card-title" th:text="#{badges.title}">Заслуге и значке</h2>
+        </div>
+
+        <div class="badges-wrapper">
+          <div class="badge-pill">
+            <svg class="badge-pill-icon" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.47L19.53 19H4.47L12 5.47zM11 10h2v4h-2zm0 5h2v2h-2z"/></svg>
+            Домаћин
+          </div>
+          <div class="badge-pill">
+            <svg class="badge-pill-icon" viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10z"/></svg>
+            Градитељ
+          </div>
+          <div class="badge-pill">
+            <svg class="badge-pill-icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+            Амбасадор
+          </div>
+          <div class="badge-pill badge-overflow" title="Прикажи све значке">+3</div>
+        </div>
+      </section>
+
+      <!-- SECTION G: GOVERNANCE & REPUTATION (PRIVATE) -->
+      <section class="card card-governance" aria-labelledby="gov-title">
+        <div class="card-header">
+          <h2 id="gov-title" class="card-title" th:text="#{governance.title}">Говернанс и статус</h2>
+          <span class="card-subtitle">Приватно</span>
+        </div>
+
+        <div style="margin-bottom: var(--space-12);">
+          <span class="status-pill clear">
+            <svg style="width:14px; height:14px; fill:currentColor;" viewBox="0 0 24 24">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+            </svg>
+            Clear / Low Risk
+          </span>
+        </div>
+
+        <p style="font-size: var(--font-size-xs); color: var(--text-muted);">
+          Видљиво само Савету. Сви позвани чланови су уредни и активни.
+        </p>
+
+        <div class="governance-note-area">
+          <label for="gov-note">Белешка интерне ревизије:</label>
+          <textarea id="gov-note" placeholder="Унесите интерну белешку или разлог за промену статуса…"></textarea>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- RIGHT MAIN COLUMN (65%)                                                -->
+    <!-- ====================================================================== -->
+    <div class="main-col">
+
+      <!-- SECTION B: TRUST & INVITATION NETWORK -->
+      <section class="card" aria-labelledby="network-title">
+        <div class="card-header">
+          <h2 id="network-title" class="card-title">Мрежа и повезаност</h2>
+        </div>
+
+        <div class="invitation-section">
+          <div>
+            <div class="card-subtitle" style="margin-bottom: 8px;">Препоручио и позвао</div>
+            <div class="inviter-box">
+              <div class="inviter-avatar">МН</div>
+              <div>
+                <a href="#" class="inviter-link">Милан Недељковић</a>
+                <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Члан од 2021. • Круг Cюрих</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card-subtitle" style="margin-bottom: 8px;">Позвани чланови (3)</div>
+            <div class="invited-grid">
+              <a href="#" class="micro-card">
+                <div class="micro-avatar">АА</div>
+                <span>Ана Анић</span>
+              </a>
+              <a href="#" class="micro-card">
+                <div class="micro-avatar">ББ</div>
+                <span>Бојан Б.</span>
+              </a>
+              <a href="#" class="micro-card">
+                <div class="micro-avatar">ВВ</div>
+                <span>Вук Вуковић</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-box">
+              <div class="stat-value">14</div>
+              <div class="stat-label">Посећени сусрети</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value">3</div>
+              <div class="stat-label">Организовани сусрети</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION E: ENDORSEMENTS (TRUST NETWORK) -->
+      <section class="card" aria-labelledby="endorsements-title">
+        <div class="card-header">
+          <h2 id="endorsements-title" class="card-title">Потврде вештина (Endorsements)</h2>
+        </div>
+
+        <div class="endorsements-list">
+          <div class="endorsement-row">
+            <div class="endorsement-info">
+              <div class="endorsement-avatar-stack">
+                <div class="micro-avatar">НН</div>
+                <div class="micro-avatar">ММ</div>
+              </div>
+              <div class="endorsement-text">
+                Потврђено за <strong>Cloud Architecture</strong>
+                <span class="endorsement-val">+3</span>
+                од Никола Н. и још 2 члана
+              </div>
+            </div>
+            <div class="endorsement-time">пре 2 дана</div>
+          </div>
+
+          <div class="endorsement-row">
+            <div class="endorsement-info">
+              <div class="endorsement-avatar-stack">
+                <div class="micro-avatar">ПП</div>
+              </div>
+              <div class="endorsement-text">
+                Потврђено за <strong>System Design</strong>
+                <span class="endorsement-val">+1</span>
+                од Петар П.
+              </div>
+            </div>
+            <div class="endorsement-time">пре 2 недеље</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION F: STRUCTURED EXPERTISE TAGS -->
+      <section class="card" aria-labelledby="tags-title">
+        <div class="card-header">
+          <h2 id="tags-title" class="card-title">Експертиза и интересовања</h2>
+        </div>
+
+        <div class="tag-category">
+          <div class="tag-category-title">Индустрија</div>
+          <div class="tag-cloud">
+            <button class="tag-chip selected">Cloud/DevOps</button>
+            <button class="tag-chip">Fintech</button>
+            <button class="tag-chip">Enterprise Software</button>
+          </div>
+        </div>
+
+        <div class="tag-category">
+          <div class="tag-category-title">Техничке вештине</div>
+          <div class="tag-cloud">
+            <button class="tag-chip selected">Kubernetes</button>
+            <button class="tag-chip selected">System Design</button>
+            <button class="tag-chip">Distributed Systems</button>
+            <button class="tag-chip">Java</button>
+          </div>
+        </div>
+
+        <div class="tag-category">
+          <div class="tag-category-title">Алумни / Едукација</div>
+          <div class="tag-cloud">
+            <button class="tag-chip selected">ETH Zürich</button>
+            <button class="tag-chip">ETF Београд</button>
+          </div>
+        </div>
+
+        <div class="tag-category">
+          <div class="tag-category-title">Хобији</div>
+          <div class="tag-cloud">
+            <button class="tag-chip">Trail Running</button>
+            <button class="tag-chip">Chess</button>
+            <button class="tag-chip">Планинарење</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION H: ACTIVITY & SCORE BREAKDOWN LOG -->
+      <section class="card" aria-labelledby="log-title">
+        <div class="card-header">
+          <h2 id="log-title" class="card-title">Историја активности и бодова</h2>
+        </div>
+
+        <div class="filter-chips" role="tablist" aria-label="Филтрирај историју">
+          <button class="filter-chip active" role="tab" aria-selected="true">Све</button>
+          <button class="filter-chip" role="tab" aria-selected="false">Доприноси</button>
+          <button class="filter-chip" role="tab" aria-selected="false" th:text="#{filters.governance}">Governance</button>
+          <button class="filter-chip" role="tab" aria-selected="false">Потврде</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="log-table" aria-label="Табела историје бодова">
+            <thead>
+              <tr>
+                <th scope="col">Датум</th>
+                <th scope="col">Акција</th>
+                <th scope="col">Промена</th>
+                <th scope="col">Укупно</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>15.08.2026.</td>
+                <td>Организација летњег окупљања у Цириху</td>
+                <td class="delta-positive">+2</td>
+                <td>42</td>
+              </tr>
+              <tr>
+                <td>01.08.2026.</td>
+                <td>Довођење новог члана (Вук Вуковић)</td>
+                <td class="delta-positive">+5</td>
+                <td>40</td>
+              </tr>
+              <tr>
+                <td>01.07.2026.</td>
+                <td>Месечна редовна активност (Сусрет)</td>
+                <td class="delta-positive">+1</td>
+                <td>35</td>
+              </tr>
+              <tr>
+                <td>01.05.2026.</td>
+                <td>Неактивност током маја</td>
+                <td class="delta-negative">−1</td>
+                <td>34</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ======================================================================== -->
+  <!-- OPTIONAL MINIMAL JS FOR INTERACTIVITY                                   -->
+  <!-- ======================================================================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Toggle Segmented Control (Visibility Selector)
+      const segmentBtns = document.querySelectorAll('.segment-btn');
+      segmentBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          segmentBtns.forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-checked', 'false');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-checked', 'true');
+        });
+      });
+
+      // Toggle Filter Chips
+      const filterChips = document.querySelectorAll('.filter-chip');
+      filterChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          filterChips.forEach(c => {
+            c.classList.remove('active');
+            c.setAttribute('aria-selected', 'false');
+          });
+          chip.classList.add('active');
+          chip.setAttribute('aria-selected', 'true');
+        });
+      });
+
+      // Toggle Expertise Tag Selection
+      const tagChips = document.querySelectorAll('.tag-chip');
+      tagChips.forEach(tag => {
+        tag.addEventListener('click', () => {
+          tag.classList.toggle('selected');
+        });
+      });
+
+      // Theme handling - prefer server cookie APP_THEME, fallback to localStorage
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeForm = document.getElementById('theme-form');
+      const themeInput = document.getElementById('theme-input');
+      const root = document.documentElement;
+      const parseCookies = () => document.cookie.split(';').reduce((acc, cur) => {
+        const parts = cur.split('=');
+        const k = parts.shift() && parts.shift ? parts.shift().trim() : undefined;
+        const v = parts.join('=');
+        if (k) acc[k] = decodeURIComponent(v);
+        return acc;
+      }, {});
+
+      const applyTheme = (t) => {
+        if (t === 'dark') {
+          root.setAttribute('data-theme', 'dark');
+          themeToggle.setAttribute('aria-pressed', 'true');
+        } else {
+          root.removeAttribute('data-theme');
+          themeToggle.setAttribute('aria-pressed', 'false');
+        }
+        // keep localStorage as a fallback for clients that do not support cookies
+        try { localStorage.setItem('site-theme', t); } catch(e) {}
+      };
+
+      // Initialize: prefer APP_THEME cookie (set by server), then localStorage, then default 'light'
+      try {
+        const cookies = parseCookies();
+        const savedTheme = (cookies['APP_THEME'] && (cookies['APP_THEME'].replace(/^"|"$/g, ''))) || localStorage.getItem('site-theme') || 'light';
+        applyTheme(savedTheme);
+      } catch(e){
+        applyTheme(localStorage.getItem('site-theme') || 'light');
+      }
+
+      // Ensure redirect input reflects current location (avoid server-side request lookup which may be null)
+      try {
+        const redirectInput = document.getElementById('redirect-input');
+        if (redirectInput) redirectInput.value = window.location.pathname + window.location.search;
+      } catch(e){}
+
+      // On toggle: update UI immediately, set hidden input and submit form so server persists cookie
+      themeToggle && themeToggle.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const current = (root.getAttribute('data-theme') === 'dark') ? 'dark' : 'light';
+        const now = current === 'dark' ? 'light' : 'dark';
+        applyTheme(now);
+        if (themeInput && themeForm) {
+          // ensure redirect is up-to-date
+          try { document.getElementById('redirect-input').value = window.location.pathname + window.location.search; } catch(e){}
+          themeInput.value = now;
+          // submit to server to persist APP_THEME cookie and perform redirect
+          themeForm.submit();
+        }
+      });
+
+      // Language selector handling
+      const langSelect = document.getElementById('lang-select');
+      // Initialize select from cookie (server will set APP_LOCALE cookie) or locale
+      try {
+        const cookies = document.cookie.split(';').reduce((acc, cur) => {
+          const [k,v] = cur.split('='); acc[k && k.trim()] = v; return acc;
+        }, {});
+        const appLocale = cookies['APP_LOCALE'];
+        if (appLocale) {
+          langSelect.value = appLocale.replace('"','').replace('"','');
+        }
+      } catch(e){}
+
+      langSelect && langSelect.addEventListener('change', () => {
+        const val = langSelect.value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('lang', val);
+        window.location.href = url.toString();
+      });
+    });
+  </script>
+
+  <style>
+    /* Dark theme overrides via data attribute */
+    :root[data-theme="dark"] {
+      --bg-page: #0b0b0b;
+      --bg-card: #0f0f0f;
+      --bg-muted: #111111;
+      --text-main: #e8e6e1;
+      --text-muted: #bdb7b0;
+      --text-light: #ffffff;
+      --border-subtle: rgba(255,255,255,0.06);
+    }
+  </style>
+</body>
+</html>

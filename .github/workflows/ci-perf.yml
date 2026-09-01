@@ -1,0 +1,42 @@
+name: CI - Performance
+
+on:
+  workflow_dispatch:
+
+jobs:
+  perf-runner:
+    # This job is intended to run on a large self-hosted runner labeled 'perf'.
+    # Register a self-hosted runner with sufficient memory (>= 16GB) and CPU to
+    # execute the performance workload and add the 'perf' label to it.
+    runs-on: [self-hosted, perf]
+    env:
+      PERF_SIZE: 1000000
+      PERF_ITERATIONS: 3
+      PERF_BATCH: false
+      # Example JVM args for the perf run. Adjust depending on available RAM.
+      PERF_XMS: -Xms4g
+      PERF_XMX: -Xmx8g
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build
+        run: ./mvnw -B -DskipTests package
+
+      - name: Copy runtime dependencies
+        run: ./mvnw dependency:copy-dependencies -DoutputDirectory=target/dependency
+
+      - name: Run perf runner
+        run: |
+          echo "Running PerfRunner with size=$PERF_SIZE iterations=$PERF_ITERATIONS batch=$PERF_BATCH"
+          ./mvnw -q exec:java -Dexec.mainClass="sapmarketing.docstore.tools.PerfRunner" -Dexec.cleanupDaemonThreads=false -Dexec.args="-Dperf.size=$PERF_SIZE -Dperf.iterations=$PERF_ITERATIONS -Dperf.batch=$PERF_BATCH"
+        env:
+          MAVEN_OPTS: "$PERF_XMS $PERF_XMX"
+

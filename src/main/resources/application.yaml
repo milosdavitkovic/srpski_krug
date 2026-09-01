@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: rs
+  messages:
+    basename: messages
+  docker:
+    compose:
+      enabled: false
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+# Enable with: mvnw spring-boot:run -Dspring-boot.run.profiles=local-https
+---
+spring:
+  config:
+    activate:
+      on-profile: local-https
+
+server:
+  ssl:
+    enabled: true
+    key-store: classpath:localhost-keystore.p12
+    key-store-type: PKCS12
+    key-store-password: changeit
+    key-alias: localhost

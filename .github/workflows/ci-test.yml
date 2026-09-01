@@ -1,0 +1,27 @@
+name: CI - Tests
+
+on:
+  push:
+    branches: [ main, master, "bugfix/**", "feature/**", "release/**" ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Grant execute permission for mvnw
+        run: chmod +x mvnw
+
+      - name: Run tests
+        run: ./mvnw -B test -DSTAGE=local
+
